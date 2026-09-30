@@ -8,7 +8,6 @@ authors = [
 ]
 requires-python = ">=3.14"
 dependencies = [
-    "gdown>=6.4.1",
     "jupyter>=1.1.1",
     "matplotlib>=3.11.2",
     "numpy>=2.5.3",
