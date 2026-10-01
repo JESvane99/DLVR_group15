@@ -1,6 +1,8 @@
 from pathlib import Path
 from zipfile import ZipFile
 
+import numpy as np
+
 
 def find_deepcrack_data() -> Path:
     """Find the DeepCrack dataset zip file in the current directory."""
@@ -8,7 +10,9 @@ def find_deepcrack_data() -> Path:
     for file in current_dir.glob("data/*"):
         if file.suffix == ".zip" and "deepcrack" in file.stem.lower():
             return file
-    raise FileNotFoundError(f"DeepCrack dataset zip file not found. looking in {current_dir}")
+    raise FileNotFoundError(
+        f"DeepCrack dataset zip file not found. looking in {current_dir}"
+    )
 
 
 def extract_deepcrack_data() -> None:
@@ -20,7 +24,9 @@ def extract_deepcrack_data() -> None:
         )  # Extract to the same directory as the zip file
 
 
-def find_train_val_duplicates(train_dataset, val_dataset, threshold=0.95, batch_size=32):
+def find_train_val_duplicates(
+    train_dataset, val_dataset, threshold=0.95, batch_size=32
+):
     """
     Find likely duplicate images across training and validation datasets.
 
@@ -58,7 +64,9 @@ def find_train_val_duplicates(train_dataset, val_dataset, threshold=0.95, batch_
     model = model.to(device).eval()
 
     def extract_features(dataset):
-        loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
+        loader = DataLoader(
+            dataset, batch_size=batch_size, shuffle=False, num_workers=0
+        )
         features = []
         with torch.inference_mode():
             for images, _ in loader:
@@ -84,7 +92,9 @@ def find_train_val_duplicates(train_dataset, val_dataset, threshold=0.95, batch_
     pairs.sort(key=lambda pair: pair["similarity"], reverse=True)
     print(f"Found {len(pairs)} possible train/validation duplicate pair(s).")
     for pair in pairs[:10]:
-        print(f"{pair['similarity']:.3f}  train: {pair['train_path']}  val: {pair['val_path']}")
+        print(
+            f"{pair['similarity']:.3f}  train: {pair['train_path']}  val: {pair['val_path']}"
+        )
     return pairs
 
 
@@ -100,12 +110,18 @@ def move_duplicates_to_review_dir(duplicates):
         val_review_path = review_dir / f"val_{val_path.name}_{i}"
         train_path.move(train_review_path)
         val_path.move(val_review_path)
-    print(f"Moved {len(duplicates)} duplicate pairs to {review_dir.resolve()} for review.")
+    print(
+        f"Moved {len(duplicates)} duplicate pairs to {review_dir.resolve()} for review."
+    )
 
 
-def check_train_val_duplicates(train_dataset, val_dataset, threshold=0.95, batch_size=32):
+def check_train_val_duplicates(
+    train_dataset, val_dataset, threshold=0.95, batch_size=32
+):
     """Check for likely duplicate images across training and validation datasets."""
-    duplicates = find_train_val_duplicates(train_dataset, val_dataset, threshold, batch_size)
+    duplicates = find_train_val_duplicates(
+        train_dataset, val_dataset, threshold, batch_size
+    )
     if duplicates:
         move_duplicates_to_review_dir(duplicates)
         print(

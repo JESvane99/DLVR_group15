@@ -1,10 +1,18 @@
-def run_all_pipeline_checks(model, x_tr, y_tr, x_va, tr_idx, va_idx, train_step):
+import math
+
+import matplotlib.pyplot as plt
+import torch
+
+
+def run_all_pipeline_checks(
+    model, x_tr, y_tr, x_va, tr_idx, va_idx, train_step, loss_fn
+):
     """
     Run all pipeline checks.
     """
     check_data(x_tr, y_tr, x_va)
     check_split(tr_idx, va_idx)
-    check_initial_loss(model, x_tr, y_tr)
+    check_initial_loss(model, x_tr, y_tr, loss_fn, num_classes=len(torch.unique(y_tr)))
     overfit_one_batch(model, x_tr, y_tr, train_step)
 
 
@@ -22,9 +30,11 @@ def check_data(x_tr, y_tr, x_va, mean=None, std=None, n_show=8):
     if mean is not None:  # undo normalisation for display
         imgs = imgs * std + mean
     imgs = (imgs - imgs.amin(dim=(1, 2, 3), keepdim=True)) / (
-        imgs.amax(dim=(1, 2, 3), keepdim=True) - imgs.amin(dim=(1, 2, 3), keepdim=True) + 1e-8
+        imgs.amax(dim=(1, 2, 3), keepdim=True)
+        - imgs.amin(dim=(1, 2, 3), keepdim=True)
+        + 1e-8
     )
-    fig, axes = plt.subplots(1, n_show, figsize=(1.6 * n_show, 2))
+    _, axes = plt.subplots(1, n_show, figsize=(1.6 * n_show, 2))
     for ax, img, label in zip(axes, imgs, y_tr[:n_show].tolist()):
         ax.imshow(img.permute(1, 2, 0).numpy())
         ax.set_title(str(label))
@@ -37,7 +47,9 @@ def check_data(x_tr, y_tr, x_va, mean=None, std=None, n_show=8):
 def check_split(tr_idx, va_idx):
     """Check B: are any examples in both splits?"""
     overlap = set(tr_idx.tolist()) & set(va_idx.tolist())
-    print(f"Train size {len(tr_idx)}, val size {len(va_idx)}, overlap: {len(overlap)} examples")
+    print(
+        f"Train size {len(tr_idx)}, val size {len(va_idx)}, overlap: {len(overlap)} examples"
+    )
     if overlap:
         print(
             f"WARNING: {len(overlap) / len(va_idx):.0%} of the validation set is also in the training set!"
@@ -45,7 +57,7 @@ def check_split(tr_idx, va_idx):
 
 
 @torch.no_grad()
-def check_initial_loss(model, x, y, num_classes=NUM_CLASSES):
+def check_initial_loss(model, x, y, loss_fn, num_classes=10):
     """Check C: loss of the untrained model vs. the expected ln(C)."""
     model.eval()
     loss = loss_fn(model(x[:512]), y[:512]).item()
@@ -64,7 +76,7 @@ def overfit_one_batch(model, x, y, train_step, steps=300, lr=0.01, batch_size=32
         loss, acc = train_step(model, optimizer, xb, yb)
         losses.append(loss)
         accs.append(acc)
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 3.2))
+    _, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 3.2))
     ax1.plot(losses)
     ax1.set_yscale("log")
     ax1.set_xlabel("Step")
