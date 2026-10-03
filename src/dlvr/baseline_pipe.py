@@ -151,13 +151,13 @@ loss_function = BCELoss()
 
 run_all_pipeline_checks(
     model=model,
-    x_tr=images,
-    y_tr=masks,
-    x_va=next(iter(val_loader))[0],
-    tr_idx=train_indices,
-    va_idx=val_indices,
+    x_train=images,
+    y_train=masks,
+    x_validation=next(iter(val_loader))[0],
+    train_idx=train_indices,
+    validation_idx=val_indices,
     train_step=lambda m, x, y: loss_function(m(x), y),
-    loss_fn=loss_function,
+    loss_function=loss_function,
 )
 
 # %% [markdown]

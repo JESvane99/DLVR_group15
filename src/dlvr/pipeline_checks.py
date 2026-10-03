@@ -6,21 +6,23 @@ import torch
 
 def run_all_pipeline_checks(
     model: torch.nn.Module,
-    x_tr: torch.Tensor,
-    y_tr: torch.Tensor,
-    x_va: torch.Tensor,
-    tr_idx: torch.Tensor,
-    va_idx: torch.Tensor,
+    x_train: torch.Tensor,
+    y_train: torch.Tensor,
+    x_validation: torch.Tensor,
+    train_idx: torch.Tensor,
+    validation_idx: torch.Tensor,
     train_step: callable,
-    loss_fn: callable,
+    loss_function: callable,
 ):
     """
     Run all pipeline checks.
     """
-    check_data(x_tr, y_tr, x_va)
-    check_split(tr_idx, va_idx)
-    check_initial_loss(model, x_tr, y_tr, loss_fn, num_classes=len(torch.unique(y_tr)))
-    overfit_one_batch(model, x_tr, y_tr, train_step)
+    check_data(x_train, y_train, x_validation)
+    check_split(train_idx, validation_idx)
+    check_initial_loss(
+        model, x_train, y_train, loss_function, num_classes=len(torch.unique(y_train))
+    )
+    overfit_one_batch(model, x_train, y_train, train_step)
 
 
 def check_data(x_tr, y_tr, x_va, mean=None, std=None, n_show=8):
