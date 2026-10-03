@@ -5,7 +5,14 @@ import torch
 
 
 def run_all_pipeline_checks(
-    model, x_tr, y_tr, x_va, tr_idx, va_idx, train_step, loss_fn
+    model: torch.nn.Module,
+    x_tr: torch.Tensor,
+    y_tr: torch.Tensor,
+    x_va: torch.Tensor,
+    tr_idx: torch.Tensor,
+    va_idx: torch.Tensor,
+    train_step: callable,
+    loss_fn: callable,
 ):
     """
     Run all pipeline checks.
@@ -30,9 +37,7 @@ def check_data(x_tr, y_tr, x_va, mean=None, std=None, n_show=8):
     if mean is not None:  # undo normalisation for display
         imgs = imgs * std + mean
     imgs = (imgs - imgs.amin(dim=(1, 2, 3), keepdim=True)) / (
-        imgs.amax(dim=(1, 2, 3), keepdim=True)
-        - imgs.amin(dim=(1, 2, 3), keepdim=True)
-        + 1e-8
+        imgs.amax(dim=(1, 2, 3), keepdim=True) - imgs.amin(dim=(1, 2, 3), keepdim=True) + 1e-8
     )
     _, axes = plt.subplots(1, n_show, figsize=(1.6 * n_show, 2))
     for ax, img, label in zip(axes, imgs, y_tr[:n_show].tolist()):
@@ -47,9 +52,7 @@ def check_data(x_tr, y_tr, x_va, mean=None, std=None, n_show=8):
 def check_split(tr_idx, va_idx):
     """Check B: are any examples in both splits?"""
     overlap = set(tr_idx.tolist()) & set(va_idx.tolist())
-    print(
-        f"Train size {len(tr_idx)}, val size {len(va_idx)}, overlap: {len(overlap)} examples"
-    )
+    print(f"Train size {len(tr_idx)}, val size {len(va_idx)}, overlap: {len(overlap)} examples")
     if overlap:
         print(
             f"WARNING: {len(overlap) / len(va_idx):.0%} of the validation set is also in the training set!"
