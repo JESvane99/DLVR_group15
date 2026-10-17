@@ -9,18 +9,27 @@ authors = [
 requires-python = ">=3.14"
 dependencies = [
     "jupyter>=1.1.1",
+    "loguru>=0.7.3",
     "matplotlib>=3.11.2",
     "numpy>=2.5.3",
     "pandas>=3.0.6",
+    "pytest>=9.1.1",
+    "ruff>=0.16.10",
     "scikit-learn>=1.9.1",
+    "segmentation-models-pytorch",
     "torch>=2.14.0",
     "torchvision>=0.29.0",
+    "wandb>=0.30.0",
 ]
 
 [project.scripts]
 unzip-data = "dlvr.utils:extract_deepcrack_data"
+all-checks = "dlvr.utils:run_all_data_checks"
 
 
 [build-system]
 requires = ["uv_build>=0.12.9,<0.13.0"]
 build-backend = "uv_build"
+
+[tool.uv.sources]
+segmentation-models-pytorch = { git = "https://github.com/qubvel/segmentation_models.pytorch" }
