@@ -4,12 +4,12 @@
 
 save figures and relevant data from following todo list
 
-- [] Verify chosen data quality (Lab 3)
-  - [] Visual inspection (including saved inspection figures)
-  - [] Mask/label imbalance (log true/false percentage of true mask)
-  - [] Image size distribution (used to argument for resizing)
-  - [] Cherrypick remove doublegangers and leeks in test and train data
-  - [] check for corrupt data
+- [x] Verify chosen data quality (Lab 3)
+  - [x] Visual inspection (including saved inspection figures)
+  - [x] Mask/label imbalance (log true/false percentage of true mask)
+  - [x] Image size distribution (used to argument for resizing)
+  - [x] Cherrypick remove doublegangers and leeks in test and train data
+  - [x] check for corrupt data
 - [] Tensor statisticks after normalization
 - [] Use torchmetrics BinaryJaccardIndex for IOU (Lab4b)
 - [] Use Torchmetrics Dicescore (Lab4b)
